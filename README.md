@@ -29,13 +29,13 @@ pip install pyrogram
 6. После введите
 
 ```bash
-git clone https://github.com/cosmo-projects/B
+git clone https://github.com/cosmo-projects/CosmoUserBot
 ```
 
 7. Затем введите
 
 ```bash
-cd 
+cd CosmoUserBot
 ```
 
 8. Запустите бота командой
