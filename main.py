@@ -24,8 +24,9 @@ if not os.path.exists(CONFIG_FILE):
     }
     with open(CONFIG_FILE, 'w') as f:
         config.write(f)
-    print("\n✅ Конфигурация сохранена! Запустите бота снова.")
-    sys.exit()
+    print("\n✅ Конфигурация сохранена! Запускаем бота...")
+    # Перезапуск скрипта для автоматического запуска
+    os.execl(sys.executable, sys.executable, *sys.argv)
 
 config.read(CONFIG_FILE)
 api_id = config.getint('pyrogram', 'api_id')
@@ -43,8 +44,8 @@ for filename in os.listdir(COMMANDS_DIR):
                 commands[cmd['name']] = cmd
                 for alias in cmd.get('aliases', []):
                     commands[alias] = cmd
-        except:
-            pass
+        except Exception as e:
+            print(f"⚠️ Ошибка загрузки команды: {e}")
 
 # Клиент Pyrogram
 app = Client(
@@ -53,14 +54,14 @@ app = Client(
     api_hash=api_hash,
     device_model="Cosmo User Bot",
     app_version="CUB 1.0",
-    system_version="SpaceOS"
+    system_version="CosmoOS"
 )
 
 # Обработчик сообщений
 @app.on_message(filters.text & (filters.private | filters.group))
 async def handle_commands(client: Client, message: Message):
     start_time = time.time()
-    prefixes = ['.', '! ', '/', '*']
+    prefixes = ['.', '!', '/', '*']  # Убрал пробел после !
     text = message.text
     
     # Поиск префикса
@@ -82,27 +83,28 @@ async def handle_commands(client: Client, message: Message):
         command = commands[cmd_name]
         try:
             await command['handler'](client, message, start_time)
-        except:
-            pass
+        except Exception as e:
+            print(f"⚠️ Ошибка выполнения команды: {e}")
 
 # Запуск клиента
 if __name__ == "__main__":
     print("""
-    ____                  __  __       ____        _   
-   / ___|___  _ __ ___   |  \/  | ___ | __ ) _   _| |_ 
-  | |   / _ \| '_ ` _ \  | |\/| |/ _ \|  _ \| | | | __|
-  | |__| (_) | | | | | | | |  | | (_) | |_) | |_| | |_ 
-   \____\___/|_| |_| |_| |_|  |_|\___/|____/ \__,_|\__|
-  :: Cosmo User Bot :: (CUB) ::          
+██████╗ ██████╗ ██╗   ██╗████████╗
+██╔══██╗██╔══██╗██║   ██║╚══██╔══╝
+██████╔╝██████╔╝██║   ██║   ██║   
+██╔══██╗██╔══██╗██║   ██║   ██║   
+██████╔╝██║  ██║╚██████╔╝   ██║   
+╚═════╝ ╚═╝  ╚═╝ ╚═════╝    ╚═╝   
 """)
-    print("🌌 Запуск космического бота...")
+    print("🌌 Запуск Cosmo User Bota (CUB) ...")
     app.start()
-    print("\n🛑 Для остановки нажмите Ctrl+C\n")
+    print("\n✅ Бот успешно запущен!")
+    print("🛑 Для остановки нажмите на клавиши в termux : Ctrl+C\n")
     
     try:
         from threading import Event
         Event().wait()
     except KeyboardInterrupt:
-        print("\n🌠 Остановка космического бота...")
+        print("\n🌠 Остановка Cosmo User Bota (CUB) ...")
         app.stop()
         print("✅ Бот успешно остановлен!")
